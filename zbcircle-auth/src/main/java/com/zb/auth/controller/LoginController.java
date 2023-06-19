@@ -28,15 +28,15 @@ public class LoginController {
     }
 
 
-    @PostMapping("/login/{id}")
+    @PostMapping("/logout/{id}")
     public RestResponse logout(@PathVariable Long id) {
         authService.logout(id);
         return RestResponse.success("退出成功");
     }
 
 
-    @RequestMapping("/r/r1")
-    @PreAuthorize("hasAuthority(xc_teachmanager)")
+    @GetMapping("/r/r1")
+    @PreAuthorize("hasAuthority('xc_teachmanager_course')")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", required = true),
     })
@@ -44,7 +44,11 @@ public class LoginController {
         return "访问r1权限";
     }
 
-    @RequestMapping("/r/r2")
+    @GetMapping("/r/r2")
+    @PreAuthorize("hasAuthority('xc_teach')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", required = true),
+    })
     public String r2() {
         return "访问r2权限";
     }

@@ -1,5 +1,6 @@
 package com.zb.auth.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.zb.auth.common.constants.RedisConstants;
 import com.zb.auth.common.exception.ZbException;
 import com.zb.auth.dto.LoginDTO;
@@ -12,6 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -34,15 +37,14 @@ public class AuthServiceImpl implements AuthService {
         UserDetailsImpl loginUser = (UserDetailsImpl) authenticate.getPrincipal();
         User user = loginUser.getUser();
         String jwt = JwtUtil.createJWT(user.getId().toString());
-        redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+user.getId(),jwt,RedisConstants.LOGIN_USER_TTL);
+        redisTemplate.opsForValue().set(RedisConstants.LOGIN_TOKEN_KEY+user.getId(),jwt,RedisConstants.LOGIN_TOKEN_TTL, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+user.getId(), JSON.toJSONString(loginUser));
         return jwt;
     }
 
     @Override
     public void logout(Long id) {
+        redisTemplate.delete(RedisConstants.LOGIN_TOKEN_KEY+id);
         redisTemplate.delete(RedisConstants.LOGIN_USER_KEY+id);
-        if (!redisTemplate.delete(RedisConstants.LOGIN_USER_KEY+id)) {
-            throw new ZbException("该用户未登陆");
-        }
     }
 }
