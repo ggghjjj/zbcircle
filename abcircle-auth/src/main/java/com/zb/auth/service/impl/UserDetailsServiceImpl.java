@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.redis.core.StringRedisTemplate;
 import java.util.List;
 
 @Service
@@ -22,13 +22,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private ZbMenuMapper menuMapper;
 
-    @Autowired
-    StringRedisTemplate redisTemplate;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
+        System.out.println(username);
         User user = userMapper.selectOne(queryWrapper);
         if (user == null) {
             throw new ZbException("用户不存在");
@@ -39,7 +38,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public UserDetails getUserPrincipal(User user) {
         List<String> permissions = menuMapper.selectPermsByUserId(user.getId());
-
         return new UserDetailsImpl(user);
     }
 }

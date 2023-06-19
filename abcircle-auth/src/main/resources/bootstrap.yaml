@@ -20,5 +20,4 @@ spring:
         max-idle: 10
         min-idle: 1
         time-between-eviction-runs: 10s
-mybatis-plus:
-  mapper-locations: classpath*:/mapper/**/*.xml
+

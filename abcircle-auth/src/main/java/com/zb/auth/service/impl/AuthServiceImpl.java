@@ -1,21 +1,26 @@
 package com.zb.auth.service.impl;
 
+import com.zb.auth.common.constants.RedisConstants;
 import com.zb.auth.dto.LoginDTO;
 import com.zb.auth.pojo.User;
 import com.zb.auth.service.AuthService;
 import com.zb.auth.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 
+@Service
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+     AuthenticationManager authenticationManager;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
     @Override
     public String login(LoginDTO loginDto) {
         String username = loginDto.getUsername();
@@ -28,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetailsImpl loginUser = (UserDetailsImpl) authenticate.getPrincipal();
         User user = loginUser.getUser();
         String jwt = JwtUtil.createJWT(user.getId().toString());
+        redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY,jwt,RedisConstants.LOGIN_USER_TTL);
         return jwt;
     }
 }
