@@ -1,5 +1,7 @@
 package com.zb.auth.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @TableName("zb_class")
 public class ZbClass implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     private String cname;
     private String intro;

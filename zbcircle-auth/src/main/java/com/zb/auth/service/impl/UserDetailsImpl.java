@@ -32,9 +32,8 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(authorities!=null) return authorities;
-
+        System.out.println(permissions);
         authorities = permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-
         return authorities;
     }
 

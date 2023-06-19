@@ -3,6 +3,8 @@ package com.zb.auth.controller;
 import com.zb.auth.common.model.RestResponse;
 import com.zb.auth.dto.LoginDTO;
 import com.zb.auth.service.AuthService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,6 @@ public class LoginController {
     }
     @PostMapping("/login")
     public RestResponse login(@RequestBody LoginDTO loginDto) {
-        System.out.println(loginDto);
         String token = authService.login(loginDto);
         return RestResponse.success(token);
     }
@@ -29,14 +30,16 @@ public class LoginController {
 
     @PostMapping("/login/{id}")
     public RestResponse logout(@PathVariable Long id) {
-        String token = authService.logout(id);
+        authService.logout(id);
         return RestResponse.success("退出成功");
     }
 
 
-
     @RequestMapping("/r/r1")
     @PreAuthorize("hasAuthority(xc_teachmanager)")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", required = true),
+    })
     public String r1() {
         return "访问r1权限";
     }

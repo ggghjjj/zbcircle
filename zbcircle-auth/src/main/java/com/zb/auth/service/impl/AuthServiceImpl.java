@@ -35,17 +35,14 @@ public class AuthServiceImpl implements AuthService {
         User user = loginUser.getUser();
         String jwt = JwtUtil.createJWT(user.getId().toString());
         redisTemplate.opsForValue().set(RedisConstants.LOGIN_USER_KEY+user.getId(),jwt,RedisConstants.LOGIN_USER_TTL);
-        System.out.println(jwt);
         return jwt;
     }
 
     @Override
-    public String logout(Long id) {
+    public void logout(Long id) {
         redisTemplate.delete(RedisConstants.LOGIN_USER_KEY+id);
         if (!redisTemplate.delete(RedisConstants.LOGIN_USER_KEY+id)) {
-            throw new ZbException("改用户未登陆");
+            throw new ZbException("该用户未登陆");
         }
-
-        return null;
     }
 }

@@ -16,9 +16,11 @@
         </processorPath>
         <module name="zbcircle-auth" />
         <module name="zbcircle-common" />
-        <module name="abcircle-auth" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="abcircle-auth" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

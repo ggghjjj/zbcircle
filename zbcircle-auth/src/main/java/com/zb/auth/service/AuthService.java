@@ -7,5 +7,5 @@ public interface AuthService {
 
     String login(LoginDTO loginDto);
 
-    String logout(Long id);
+    void logout(Long id);
 }
