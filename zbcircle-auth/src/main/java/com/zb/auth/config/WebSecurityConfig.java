@@ -1,5 +1,6 @@
 package com.zb.auth.config;
 
+import com.alibaba.nacos.common.utils.HttpMethod;
 import com.zb.auth.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,17 +42,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(
                         "/auth/login",
-                        "/auth/register",
+                        "/auth/user/register",
                         "/auth/logout/*",
                         "/swagger/**",
                         "/swagger-ui.html",
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/v2/**",
-                        "/auth/login"
-
+                        "/auth/login",
+                        "/auth/user/userid/**",
+                        "/auth/user/username/**",
+                        "/auth/perm/**"
                 )
                 .permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);

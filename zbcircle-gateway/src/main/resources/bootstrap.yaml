@@ -2,6 +2,9 @@ spring:
   application:
     name: zbcircle-gateway
 
+  main:
+    allow-bean-definition-overriding: true
+
   profiles:
     active: dev
   cloud:
@@ -15,6 +18,9 @@ spring:
         group: zbcircle-gateway
         file-extension: yaml
         refresh-enabled: true
+
+
+
 #    gateway:
 #      #      filter:
 #      #        strip-prefix:

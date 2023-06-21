@@ -1,6 +1,7 @@
 package com.zb.auth.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zb.auth.common.exception.ZbException;
 import com.zb.auth.common.utils.RegexpUtils;
 import com.zb.auth.dao.UserMapper;
@@ -72,5 +73,20 @@ public class UserServiceImpl implements UserService {
         user.setId(Long.valueOf(RandomUtil.randomNumbers(8)));
 
         userMapper.insert(user);
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        User user = userMapper.selectById(userId);
+        return user;
+    }
+
+    @Override
+    public User getUserByName(String username) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        System.out.println(username);
+        User user = userMapper.selectOne(queryWrapper);
+        return user;
     }
 }
