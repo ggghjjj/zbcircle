@@ -1,9 +1,9 @@
 package com.zb.auth;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zb.auth.dao.UserMapper;
 import com.zb.auth.dao.ZbMenuMapper;
 import com.zb.auth.pojo.User;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
