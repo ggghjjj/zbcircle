@@ -1,8 +1,21 @@
-server:
-  port: 8092
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/zb_post
-    username: root
-    password: admin
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: zbcircle-post
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 94a4c5b7-425e-444d-a025-7fcfb3cf0f98
+        group: zbcircle
+      config:
+        namespace: 94a4c5b7-425e-444d-a025-7fcfb3cf0f98
+        group: zbcircle
+        refresh-enabled: true
+        file-extension: yaml
+        shared-configs:
+          - data-id: zbcircle-common-${spring.profiles.active}.yaml
+            group: zbcircle-common
+            refresh: true
+
