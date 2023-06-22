@@ -1,0 +1,8 @@
+server:
+  port: 8092
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/zb_post
+    username: root
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver

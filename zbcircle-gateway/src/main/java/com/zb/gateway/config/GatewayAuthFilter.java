@@ -57,18 +57,18 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         }
     }
 
-//    @Autowired
-//    private TokenStore tokenStore;
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         String requestUrl = exchange.getRequest().getPath().value();
 
         AntPathMatcher pathMatcher = new AntPathMatcher();
+        System.out.println(getToken(exchange));
         //白名单放行
         for (String url : whitelist) {
             if (pathMatcher.match(url, requestUrl)) {
+                System.out.println(url);
+                System.out.println(requestUrl);
                 return chain.filter(exchange);
             }
         }
@@ -119,6 +119,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
 //            if (expired) {
 //                return buildReturnMono("认证令牌已过期", exchange);
 //            }
+        System.out.println("刷新成功");
             return chain.filter(exchange);
 //        } catch (InvalidTokenException e) {
 //            log.info("认证令牌无效: {}", token);
@@ -131,6 +132,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
      */
     private String getToken(ServerWebExchange exchange) {
         String tokenStr = exchange.getRequest().getHeaders().getFirst("Authorization");
+        System.out.println(tokenStr);
         if (StringUtils.isBlank(tokenStr)) {
             return null;
         }

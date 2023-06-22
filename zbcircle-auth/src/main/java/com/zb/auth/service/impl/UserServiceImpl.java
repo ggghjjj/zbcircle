@@ -4,9 +4,11 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zb.auth.common.exception.ZbException;
 import com.zb.auth.common.utils.RegexpUtils;
+import com.zb.auth.dao.UserInfoMapper;
 import com.zb.auth.dao.UserMapper;
 import com.zb.auth.dto.RegisterDTO;
 import com.zb.auth.pojo.User;
+import com.zb.auth.pojo.UserInfo;
 import com.zb.auth.service.UserService;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,10 @@ import java.util.Date;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
+    @Autowired
+    private UserInfoMapper userInfoMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Override
@@ -72,6 +76,8 @@ public class UserServiceImpl implements UserService {
         user.setUpdateTime(LocalDateTime.now());
         user.setId(Long.valueOf(RandomUtil.randomNumbers(8)));
 
+        UserInfo userInfo = new UserInfo().builder().userId(user.getId()).build();
+        userInfoMapper.insert(userInfo);
         userMapper.insert(user);
     }
 
@@ -88,5 +94,40 @@ public class UserServiceImpl implements UserService {
         System.out.println(username);
         User user = userMapper.selectOne(queryWrapper);
         return user;
+    }
+
+    @Override
+    public Boolean UpdateUserInfo(UserInfo userInfo) {
+        int count = userInfoMapper.updateById(userInfo);
+
+        return count > 0 ? true : false;
+    }
+
+    @Override
+    public Boolean UpdateUser(User user) {
+        int count = userMapper.updateById(user);
+        return count > 0 ? true : false;
+    }
+
+    @Override
+    public Boolean DeleteUser(Long id) {
+        User user = userMapper.selectById(id);
+        if(user==null) {
+            return false;
+        }
+        int count1 = userMapper.deleteById(id);
+        int count2 = userInfoMapper.deleteById(id);
+
+        return true;
+    }
+
+    @Override
+    public User selectUser(Long id) {
+        return userMapper.selectById(id);
+    }
+
+    @Override
+    public UserInfo selectUserInfo(Long id) {
+        return userInfoMapper.selectById(id);
     }
 }
