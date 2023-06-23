@@ -1,6 +1,9 @@
 package com.zb.post.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,44 +42,47 @@ public class SecurityUtil {
     public static class User implements Serializable {
 
         private static final long serialVersionUID = 1L;
-
-        private String id;
-
+        private Long id;
+        private String sno;
+        @ApiModelProperty(value = "用户名")
         private String username;
-
+        @ApiModelProperty(value = "密码")
         private String password;
-
-        private String salt;
-
+        @ApiModelProperty(value = "姓名")
         private String name;
+        @ApiModelProperty(value = "昵称")
         private String nickname;
+        @ApiModelProperty(value = "微信号")
         private String wxUnionid;
-        private String companyId;
+        @ApiModelProperty(value = "课程id")
+        private String classId;
         /**
          * 头像
          */
+        @ApiModelProperty(value = "投降")
         private String userpic;
 
-        private String utype;
-
+        @ApiModelProperty(value = "生日")
         private LocalDateTime birthday;
-
+        @ApiModelProperty(value = "性别")
         private String sex;
-
+        @ApiModelProperty(value = "邮箱")
         private String email;
-
-        private String cellphone;
-
+        @ApiModelProperty(value = "手机号")
+        private String phone;
+        @ApiModelProperty(value = "qq号")
         private String qq;
 
         /**
          * 用户状态
          */
+        @ApiModelProperty(value = "用户状态")
         private String status;
-
+        @ApiModelProperty(value = "创建时间")
         private LocalDateTime createTime;
-
+        @ApiModelProperty(value = "更新时间")
         private LocalDateTime updateTime;
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.zb.post.service;
 
 import com.zb.auth.common.model.PageParams;
+import com.zb.auth.common.model.PageResult;
 import com.zb.auth.common.model.RestResponse;
 import com.zb.post.pojo.Blog;
 
@@ -12,9 +13,11 @@ public interface BlogService {
 
     void likeBlog(Long id);
 
-    List<Blog> queryMyBlog(PageParams params);
+    PageResult<Blog> queryMyBlog(PageParams params);
 
-    Blog queryBlogByUserId(PageParams params, Long id);
+    PageResult<Blog>  queryBlogByUserId(PageParams params, Long id);
 
     Blog queryBlog(Long id);
+
+    PageResult<Blog> queryHotBlog(PageParams params);
 }
