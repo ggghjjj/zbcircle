@@ -19,13 +19,3 @@ spring:
           - data-id: zbcircle-third-${spring.profiles.active}.yaml
             group: zbcircle-third
             refresh: true
-
-#      alicloud:
-#        access-key: LTAI5t5wwJCicqj3E4UfBBxu
-#        secret-key: eXoSOV3biyeRYlKdkMc7wxUvzroEDb
-#        oss:
-#          endpoint: oss-cn-beijing.aliyuncs.com
-#          bucket: zbcirccle
-#server:
-#  port: 8093
-
