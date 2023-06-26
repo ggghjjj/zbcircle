@@ -9,20 +9,23 @@ import com.zb.gateway.service.impl.UserDetailsImpl;
 import com.zb.gateway.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
+import org.springframework.util.StringUtils;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -75,8 +78,8 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
 
         String token = getToken(exchange);
 
-        if (!org.springframework.util.StringUtils.hasText(token) || !token.startsWith("Bearer ")) {
-            return chain.filter(exchange);
+        if (!StringUtils.hasText(token) || !token.startsWith("Bearer ")) {
+            return buildReturnMono("未认证", exchange);
         }
 
         token = token.substring(7);
@@ -86,12 +89,12 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
             Claims claims = JwtUtil.parseJWT(token);
             userid = claims.getSubject();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return buildReturnMono("认证错误", exchange);
         }
         User user = userServiceClient.getUser(Long.valueOf(userid));
 
         if (user == null) {
-            throw new ZbException("用户名未登录");
+            return buildReturnMono("用户名未登陆", exchange);
         }
         String json = stringRedisTemplate.opsForValue().get(RedisConstants.LOGIN_USER_KEY+userid);
         System.out.println(json);
@@ -106,25 +109,8 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         String key = RedisConstants.LOGIN_TOKEN_KEY+user.getId();
         stringRedisTemplate.expire(key,RedisConstants.LOGIN_TOKEN_TTL, TimeUnit.MINUTES);
 
-        //检查token是否存在
-  //      String token = getToken(exchange);
-//        if (StringUtils.isBlank(token)) {
-//            return buildReturnMono("没有认证", exchange);
-//        }
-        //判断是否是有效的token
-//        OAuth2AccessToken oAuth2AccessToken;
-//        try {
-//            oAuth2AccessToken = tokenStore.readAccessToken(token);
-//            boolean expired = oAuth2AccessToken.isExpired();
-//            if (expired) {
-//                return buildReturnMono("认证令牌已过期", exchange);
-//            }
         System.out.println("刷新成功");
-            return chain.filter(exchange);
-//        } catch (InvalidTokenException e) {
-//            log.info("认证令牌无效: {}", token);
-//            return buildReturnMono("认证令牌无效", exchange);
-//        }
+        return chain.filter(exchange);
     }
 
     /**
@@ -132,26 +118,19 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
      */
     private String getToken(ServerWebExchange exchange) {
         String tokenStr = exchange.getRequest().getHeaders().getFirst("Authorization");
-        System.out.println(tokenStr);
-        if (StringUtils.isBlank(tokenStr)) {
-            return null;
-        }
-        String token = tokenStr.split(" ")[1];
-        if (StringUtils.isBlank(token)) {
-            return null;
-        }
-        return token;
+
+        return tokenStr;
     }
 
-//    private Mono<Void> buildReturnMono(String error, ServerWebExchange exchange) {
-//        ServerHttpResponse response = exchange.getResponse();
-//        String jsonString = JSON.toJSONString(new RestErrorResponse(error));
-//        byte[] bits = jsonString.getBytes(StandardCharsets.UTF_8);
-//        DataBuffer buffer = response.bufferFactory().wrap(bits);
-//        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-//        response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
-//        return response.writeWith(Mono.just(buffer));
-//    }
+    private Mono<Void> buildReturnMono(String error, ServerWebExchange exchange) {
+        ServerHttpResponse response = exchange.getResponse();
+        String jsonString = JSON.toJSONString(new RestErrorResponse(error));
+        byte[] bits = jsonString.getBytes(StandardCharsets.UTF_8);
+        DataBuffer buffer = response.bufferFactory().wrap(bits);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
+        return response.writeWith(Mono.just(buffer));
+    }
 
     @Override
     public int getOrder() {

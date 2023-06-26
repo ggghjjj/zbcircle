@@ -31,6 +31,7 @@ public class FollowServiceImpl implements FollowService {
     private StringRedisTemplate stringRedisTemplate;
 
 
+    //关注和取消关注
     @Override
     public String follow(Long followUserId, Boolean isFollow) {
         SecurityUtil.User user = SecurityUtil.getUser();
@@ -54,6 +55,7 @@ public class FollowServiceImpl implements FollowService {
         return null;
     }
 
+    // 是否关注
     @Override
     public Boolean isfollow(Long followUserId) {
         SecurityUtil.User user = SecurityUtil.getUser();
@@ -67,6 +69,7 @@ public class FollowServiceImpl implements FollowService {
 
     }
 
+    // 共同关注的人
     @Override
     public List<SecurityUtil.User> followCommons(Long id) {
         SecurityUtil.User user = SecurityUtil.getUser();

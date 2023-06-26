@@ -34,6 +34,7 @@ public class BlogServiceImpl implements BlogService {
         return insert > 0 ? true : false;
     }
 
+
     public void isBlogLiked(Blog blog) {
         SecurityUtil.User user = SecurityUtil.getUser();
         if(user==null) {
@@ -45,6 +46,8 @@ public class BlogServiceImpl implements BlogService {
         Double score = stringRedisTemplate.opsForZSet().score(key, userId.toString());
         blog.setIsLike(score != null);
     }
+
+    // 点赞和取消点赞
     @Override
     public void likeBlog(Long id) {
         String key = RedisConstants.BLOG_LIKED_KEY + id;
@@ -81,6 +84,7 @@ public class BlogServiceImpl implements BlogService {
         return result;
     }
 
+    // 查询某人的所有帖子
     @Override
     public PageResult<Blog>  queryBlogByUserId(PageParams params, Long id) {
 
@@ -105,6 +109,7 @@ public class BlogServiceImpl implements BlogService {
         return blogMapper.selectById(id);
     }
 
+    // 查询热门帖子按照点赞排序
     @Override
     public PageResult<Blog> queryHotBlog(PageParams params) {
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
@@ -122,6 +127,7 @@ public class BlogServiceImpl implements BlogService {
 
         return result;
     }
+
 
     private void updateBlog(Blog blog) {
         Long userId = blog.getUserId();
