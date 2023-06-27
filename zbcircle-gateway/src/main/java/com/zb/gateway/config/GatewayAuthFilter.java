@@ -108,7 +108,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         String key = RedisConstants.LOGIN_TOKEN_KEY+user.getId();
         stringRedisTemplate.expire(key,RedisConstants.LOGIN_TOKEN_TTL, TimeUnit.MINUTES);
-
+        //System.out.println(user);
         System.out.println("刷新成功");
         return chain.filter(exchange);
     }

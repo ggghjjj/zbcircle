@@ -41,18 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(
-                        "/auth/login",
-                        "/auth/user/register",
-                        "/auth/logout/*",
-                        "/swagger/**",
-                        "/swagger-ui.html",
-                        "/swagger-resources/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/auth/login",
-                        "/auth/user/userid/**",
-                        "/auth/user/username/**",
-                        "/auth/perm/**"
+                        "/**"
                 )
                 .permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()

@@ -2,6 +2,7 @@ package com.zb.post.controller;
 
 
 import com.zb.auth.common.model.RestResponse;
+import com.zb.post.pojo.User;
 import com.zb.post.service.FollowService;
 import com.zb.post.utils.SecurityUtil;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class FollowController {
 
     @GetMapping("/common/{id}")
     public RestResponse followCommons(@PathVariable("id") Long id) {
-        List<SecurityUtil.User> list= followService.followCommons(id);
+        List<User> list= followService.followCommons(id);
         return RestResponse.success(list);
     }
 }

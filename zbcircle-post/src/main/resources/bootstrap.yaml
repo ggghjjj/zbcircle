@@ -1,6 +1,9 @@
 spring:
   application:
     name: zbcircle-post
+
+  main:
+    allow-bean-definition-overriding: true
   profiles:
     active: dev
   cloud:
@@ -15,7 +18,7 @@ spring:
         refresh-enabled: true
         file-extension: yaml
         shared-configs:
-          - data-id: zbcircle-common-${spring.profiles.active}.yaml
-            group: zbcircle-common
+          - data-id: zbcircle-post-${spring.profiles.active}.yaml
+            group: zbcircle-post
             refresh: true
 

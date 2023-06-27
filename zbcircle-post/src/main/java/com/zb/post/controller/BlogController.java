@@ -9,6 +9,9 @@ import com.zb.auth.common.model.RestResponse;
 import com.zb.post.pojo.Blog;
 import com.zb.post.service.BlogService;
 import com.zb.post.utils.SecurityUtil;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,6 +33,10 @@ public class BlogController {
     }
 
     @PutMapping("/like/{id}")
+    @ApiParam(value = "博客ID", example = "123")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", required = true),
+    })
     public RestResponse likeBlog(@PathVariable("id") Long id) {
         blogService.likeBlog(id);
         return RestResponse.success("成功");

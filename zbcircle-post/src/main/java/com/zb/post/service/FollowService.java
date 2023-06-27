@@ -1,5 +1,6 @@
 package com.zb.post.service;
 
+import com.zb.post.pojo.User;
 import com.zb.post.utils.SecurityUtil;
 
 import java.util.List;
@@ -9,5 +10,5 @@ public interface FollowService {
 
     Boolean isfollow(Long followUserId);
 
-    List<SecurityUtil.User> followCommons(Long id);
+    List<User> followCommons(Long id);
 }

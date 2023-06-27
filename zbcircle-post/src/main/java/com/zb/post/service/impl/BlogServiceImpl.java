@@ -9,6 +9,7 @@ import com.zb.auth.common.model.PageResult;
 import com.zb.auth.common.model.RestResponse;
 import com.zb.post.dao.BlogMapper;
 import com.zb.post.pojo.Blog;
+import com.zb.post.pojo.User;
 import com.zb.post.service.BlogService;
 import com.zb.post.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class BlogServiceImpl implements BlogService {
 
 
     public void isBlogLiked(Blog blog) {
-        SecurityUtil.User user = SecurityUtil.getUser();
+        User user = SecurityUtil.getUser();
         if(user==null) {
             return ;
         }
@@ -51,10 +52,10 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void likeBlog(Long id) {
         String key = RedisConstants.BLOG_LIKED_KEY + id;
-        SecurityUtil.User user = SecurityUtil.getUser();
+        User user = SecurityUtil.getUser();
         Long userId = user.getId();
-
-        Double score = stringRedisTemplate.opsForZSet().score(key, userId);
+        System.out.println(user);
+        Double score = stringRedisTemplate.opsForZSet().score(key, userId.toString());
         Blog blog = blogMapper.selectById(id);
         if(score == null) {
             blog.setLiked(blog.getLiked() + 1);
@@ -68,7 +69,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public PageResult<Blog> queryMyBlog(PageParams params) {
-        SecurityUtil.User user = SecurityUtil.getUser();
+        User user = SecurityUtil.getUser();
         Long userId = user.getId();
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",userId);
@@ -88,7 +89,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public PageResult<Blog>  queryBlogByUserId(PageParams params, Long id) {
 
-        SecurityUtil.User user = SecurityUtil.getUser();
+        User user = SecurityUtil.getUser();
         Long userId = user.getId();
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",id);
@@ -131,7 +132,7 @@ public class BlogServiceImpl implements BlogService {
 
     private void updateBlog(Blog blog) {
         Long userId = blog.getUserId();
-        SecurityUtil.User user = SecurityUtil.getUser();
+        User user = SecurityUtil.getUser();
         blog.setIcon(user.getUserpic());
         blog.setName(user.getNickname());
     }
