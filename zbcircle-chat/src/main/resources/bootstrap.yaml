@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: zbcircle-chat
+
+  main:
+    allow-bean-definition-overriding: true
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 94a4c5b7-425e-444d-a025-7fcfb3cf0f98
+        group: zbcircle
+      config:
+        namespace: 94a4c5b7-425e-444d-a025-7fcfb3cf0f98
+        group: zbcircle
+        refresh-enabled: true
+        file-extension: yaml
+        shared-configs:
+          - data-id: zbcircle-chat-${spring.profiles.active}.yaml
+            group: zbcircle-chat
+            refresh: true
