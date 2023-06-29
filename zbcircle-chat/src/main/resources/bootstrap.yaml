@@ -2,6 +2,10 @@ spring:
   application:
     name: zbcircle-chat
 
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/chatRecord
+
   main:
     allow-bean-definition-overriding: true
   profiles:

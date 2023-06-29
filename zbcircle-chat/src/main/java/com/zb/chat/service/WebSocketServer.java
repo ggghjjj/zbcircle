@@ -4,7 +4,9 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.zb.chat.feignclient.UserServiceClient;
+import com.zb.chat.pojo.Record;
 import com.zb.chat.pojo.User;
+import com.zb.chat.utils.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,14 +31,12 @@ public class WebSocketServer {
     final public static ConcurrentHashMap<String, WebSocketServer> users = new ConcurrentHashMap<>();
 
     private Session session = null;
-
-    private static UserServiceClient userServiceClient;
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    @Autowired
+    private UserServiceClient userServiceClient;
 
     @Autowired
-    public static void setUserServiceClient(UserServiceClient userServiceClient) {
-        WebSocketServer.userServiceClient = userServiceClient;
-    }
-
+    private RecordService recordService;
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException {
         this.session = session;
@@ -79,6 +81,13 @@ public class WebSocketServer {
         String toUsername = obj.getStr("to"); // to表示发送给哪个用户，比如 admin
         String text = obj.getStr("text"); // 发送的消息文本  hello
         // {"to": "admin", "text": "聊天文本"}
+
+        SensitiveWordUtil.replaceSensitiveWord(message, 1, "*");
+
+        Record record = new Record().builder().fromName(username).toName(toUsername).time(dateFormat.format(LocalDateTime.now())).content(message).build();
+        recordService.insert(record);
+
+
         Session toSession = users.get(toUsername).session; // 根据 to用户名来获取 session，再通过session发送消息文本
         if (toSession != null) {
             // 服务器端 再把消息组装一下，组装后的消息包含发送人和发送的文本内容
