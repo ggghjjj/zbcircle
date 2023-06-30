@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class LoginController {
@@ -24,7 +27,10 @@ public class LoginController {
     @PostMapping("/login")
     public RestResponse login(@RequestBody LoginDTO loginDto) {
         String token = authService.login(loginDto);
-        return RestResponse.success(token);
+        Map<String,String> result = new HashMap<>();
+        result.put("token",token);
+        result.put("username", loginDto.getUsername());
+        return RestResponse.success(result);
     }
 
 

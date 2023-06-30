@@ -3,8 +3,11 @@ package com.zb.chat.service;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.zb.chat.dto.NameAndAvatar;
 import com.zb.chat.feignclient.UserServiceClient;
 import com.zb.chat.pojo.Record;
+import com.zb.chat.pojo.ResultMessage;
 import com.zb.chat.pojo.User;
 import com.zb.chat.utils.SensitiveWordUtil;
 import org.slf4j.Logger;
@@ -18,8 +21,11 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 @ServerEndpoint(value = "/chat/websocket/{username}")
@@ -30,6 +36,7 @@ public class WebSocketServer {
 
     final public static ConcurrentHashMap<String, WebSocketServer> users = new ConcurrentHashMap<>();
 
+    private  Integer headcount = 0;
     private Session session = null;
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Autowired
@@ -40,22 +47,15 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException {
         this.session = session;
-        User user = userServiceClient.getUserByName(username);
-        if(user==null) {
+        System.out.println(username);
+        if(username==null) {
             this.session.close();
         }else {
             users.put(username,this);
+            headcount++;
         }
         log.info("有新用户加入，username={}, 当前在线人数为：{}", username, users.size());
-        JSONObject result = new JSONObject();
-        JSONArray array = new JSONArray();
-        result.set("users", array);
-        for (Object key : users.keySet()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.set("username", key);
-            array.add(jsonObject);
-        }
-        sendAllMessage(JSONUtil.toJsonStr(result));  // 后台发送消息给所有的客户端
+        listUsers();
     }
 
     /**
@@ -84,22 +84,23 @@ public class WebSocketServer {
 
         SensitiveWordUtil.replaceSensitiveWord(message, 1, "*");
 
-        Record record = new Record().builder().fromName(username).toName(toUsername).time(dateFormat.format(LocalDateTime.now())).content(message).build();
+        Record record = new Record().builder().fromName(username).toName(toUsername)
+                .time(dateFormat.format(LocalDateTime.now())).content(message).build();
         recordService.insert(record);
+        ResultMessage resultMessage = new ResultMessage(false,false,true,username,headcount,record);
 
-
-        Session toSession = users.get(toUsername).session; // 根据 to用户名来获取 session，再通过session发送消息文本
-        if (toSession != null) {
-            // 服务器端 再把消息组装一下，组装后的消息包含发送人和发送的文本内容
-            // {"from": "zhang", "text": "hello"}
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.set("from", username);  // from 是 zhang
-            jsonObject.set("text", text);  // text 同上面的text
-            this.sendMessage(jsonObject.toString(), toSession);
-            log.info("发送给用户username={}，消息：{}", toUsername, jsonObject.toString());
-        } else {
-            log.info("发送失败，未找到用户username={}的session", toUsername);
+        if(toUsername.equals("all")) {
+            sendAllMessage(resultMessage.toString());
+        }else {
+            Session toSession = users.get(toUsername).session; // 根据 to用户名来获取 session，再通过session发送消息文本
+            if (toSession != null) {
+                this.sendMessage(resultMessage.toString(), toSession);
+                log.info("发送给用户username={}，消息：{}", toUsername, resultMessage.toString());
+            } else {
+                log.info("发送失败，未找到用户username={}的session", toUsername);
+            }
         }
+
     }
 
     @OnError
@@ -133,5 +134,26 @@ public class WebSocketServer {
         } catch (Exception e) {
             log.error("服务端发送消息给客户端失败", e);
         }
+    }
+
+    private void listUsers(){
+        ResultMessage resultMessage = new ResultMessage(false,true,false,null,headcount,getNamesAndAvatars());
+        String message = JSON.toJSONString(resultMessage);
+
+        sendAllMessage(message);
+    }
+
+    public List<String> getNamesAndAvatars(){
+        Set<String> names = users.keySet();
+
+
+        List<String> nameAndAvatars = names.stream().collect(Collectors.toList());
+
+        // getAvatars
+        if(nameAndAvatars != null)
+            nameAndAvatars.add("all");
+
+        log.info("{}",nameAndAvatars);
+        return nameAndAvatars;
     }
 }

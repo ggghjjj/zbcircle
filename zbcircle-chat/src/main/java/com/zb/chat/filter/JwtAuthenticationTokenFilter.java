@@ -9,6 +9,7 @@ import com.zb.chat.pojo.User;
 import com.zb.auth.common.constants.RedisConstants;
 import com.zb.auth.common.exception.ZbException;
 import io.jsonwebtoken.Claims;
+import io.lettuce.core.output.ScanOutput;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,13 +46,14 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("Authorization");
 
+        System.out.println(token);
         if (!StringUtils.hasText(token) || !token.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         token = token.substring(7);
-        System.out.println(token);
+       // System.out.println(token);
         String userid;
         try {
             Claims claims = JwtUtil.parseJWT(token);
@@ -65,7 +67,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new ZbException("用户名未登录");
         }
         String json = stringRedisTemplate.opsForValue().get(RedisConstants.LOGIN_USER_KEY+userid);
-        System.out.println(json);
+       // System.out.println(json);
         UserDetailsImpl loginUser = JSON.parseObject(json, UserDetailsImpl.class);
 
 

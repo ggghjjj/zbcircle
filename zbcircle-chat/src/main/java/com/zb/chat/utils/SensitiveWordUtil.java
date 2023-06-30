@@ -55,7 +55,7 @@ public class SensitiveWordUtil {
     public static boolean isContainSensitiveWord(String txt, int matchType){
         boolean flag = false;
         for(int i = 0 ; i < txt.length() ; i++){
-            int matchFlag = this.CheckSensitiveWord(txt, i, matchType);
+            int matchFlag = CheckSensitiveWord(txt, i, matchType);
             if(matchFlag > 0){
                 flag = true;
             }

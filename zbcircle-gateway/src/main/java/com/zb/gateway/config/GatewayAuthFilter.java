@@ -67,6 +67,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
 
         AntPathMatcher pathMatcher = new AntPathMatcher();
         System.out.println(getToken(exchange));
+
         //白名单放行
         for (String url : whitelist) {
             if (pathMatcher.match(url, requestUrl)) {

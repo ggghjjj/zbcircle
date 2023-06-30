@@ -25,4 +25,9 @@ class ZbcircleGatewayApplicationTests {
 
     }
 
+    @Test
+    void test() {
+        System.out.println("hah");
+    }
+
 }

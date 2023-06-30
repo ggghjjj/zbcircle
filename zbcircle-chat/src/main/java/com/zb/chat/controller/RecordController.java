@@ -16,13 +16,13 @@ public class RecordController {
     @Autowired
     private RecordService recordService;
 
-    @GetMapping
+    @GetMapping("/records")
     public RestResponse getRecords(@RequestParam String fromUser,@RequestParam String toUser){
         List<Record> records = recordService.getRecords(fromUser,toUser);
         return RestResponse.success(records);
     }
 
-    @PostMapping
+    @PostMapping("/insert")
     public RestResponse insert(@RequestBody Record record){
         Boolean flag = recordService.insert(record);
         return flag ? RestResponse.success("插入成功") : RestResponse.validfail("插入失败");

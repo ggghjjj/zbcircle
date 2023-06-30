@@ -35,7 +35,7 @@ public class User implements Serializable {
     /**
      * 头像
      */
-    @ApiModelProperty(value = "投降")
+    @ApiModelProperty(value = "头像")
     private String userpic;
 
     @ApiModelProperty(value = "生日")
