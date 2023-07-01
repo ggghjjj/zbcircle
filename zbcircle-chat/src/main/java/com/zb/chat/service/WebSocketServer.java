@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.WebSocketMessage;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -39,23 +40,20 @@ public class WebSocketServer {
 
     final public static ConcurrentHashMap<String, WebSocketServer> users = new ConcurrentHashMap<>();
 
-    private   RestTemplate restTemplate;
+    private  static RestTemplate restTemplate;
 
     private Session session = null;
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static RecordService recordService ;
 
-    private UserService userService;
+//    private static RecordService recordService = (RecordService) ApplicationHelper.getBean();
 
-
-    private RecordService recordService;
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
+
+
     @Autowired
     public void setRecordService(RecordService recordService) {
         this.recordService = recordService;
@@ -95,6 +93,10 @@ public class WebSocketServer {
     public void onMessage(String message, Session session, @PathParam("username") String username) {
         log.info("服务端收到用户username={}的消息:{}", username, message);
         JSONObject obj = JSONUtil.parseObj(message);
+
+        //Record record1 = JSON.parseObject(message.getPayload().toString(), Record.class);
+        //System.out.println(record1);
+
         String toUsername = obj.getStr("toName"); // to表示发送给哪个用户，比如 admin
         // {"to": "admin", "text": "聊天文本"}
         String content = obj.getStr("content");
@@ -106,18 +108,19 @@ public class WebSocketServer {
                 .fromAvatar(fromAvatar).time(dateFormat.format(new Date())).content(content).build();
         System.out.println(record);
 
-            recordService.insert(record);
+        recordService.insert(record);
 
 
         ResultMessage resultMessage = new ResultMessage(false,false,true,username, users.size(), record);
 
         if(toUsername.equals("all")) {
-            sendAllMessage(resultMessage.toString());
+            sendAllMessage(JSON.toJSONString(resultMessage));
         }else {
             Session toSession = users.get(toUsername).session; // 根据 to用户名来获取 session，再通过session发送消息文本
             if (toSession != null) {
-                this.sendMessage(resultMessage.toString(), toSession);
-                log.info("发送给用户username={}，消息：{}", toUsername, resultMessage.toString());
+                this.sendMessage(JSON.toJSONString(resultMessage), toSession);
+                this.sendMessage(JSON.toJSONString(resultMessage), session);
+                log.info("发送给用户username={}，消息：{}", toUsername, JSON.toJSONString(resultMessage));
             } else {
                 log.info("发送失败，未找到用户username={}的session", toUsername);
             }
