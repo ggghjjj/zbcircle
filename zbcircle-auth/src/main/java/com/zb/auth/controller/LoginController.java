@@ -30,6 +30,8 @@ public class LoginController {
         Map<String,String> result = new HashMap<>();
         result.put("token",token);
         result.put("username", loginDto.getUsername());
+        result.put("photo","https://thirdwx.qlogo.cn/mmopen/vi_32/P8h3wxWDqCqfI0BmHxAYHEzppsaBp4xt7nscyiaQ2ZptEhzyKcEia7loT6pO6zExaM9FR7BnSguxqKYuIe5B3aEA/132");
+        System.out.println(result);
         return RestResponse.success(result);
     }
 

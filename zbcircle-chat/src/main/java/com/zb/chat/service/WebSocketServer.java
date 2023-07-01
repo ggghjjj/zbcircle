@@ -9,11 +9,13 @@ import com.zb.chat.feignclient.UserServiceClient;
 import com.zb.chat.pojo.Record;
 import com.zb.chat.pojo.ResultMessage;
 import com.zb.chat.pojo.User;
+import com.zb.chat.service.impl.UserService;
 import com.zb.chat.utils.SensitiveWordUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -21,6 +23,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,14 +39,29 @@ public class WebSocketServer {
 
     final public static ConcurrentHashMap<String, WebSocketServer> users = new ConcurrentHashMap<>();
 
-    private  Integer headcount = 0;
+    private   RestTemplate restTemplate;
+
     private Session session = null;
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    @Autowired
-    private UserServiceClient userServiceClient;
 
-    @Autowired
+    private UserService userService;
+
+
     private RecordService recordService;
+    @Autowired
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+    @Autowired
+    public void setRecordService(RecordService recordService) {
+        this.recordService = recordService;
+    }
+
+    private final static String getUserByUserName = "http://127.0.0.1:8094/auth/user/username/";
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException {
         this.session = session;
@@ -52,7 +70,6 @@ public class WebSocketServer {
             this.session.close();
         }else {
             users.put(username,this);
-            headcount++;
         }
         log.info("有新用户加入，username={}, 当前在线人数为：{}", username, users.size());
         listUsers();
@@ -78,16 +95,21 @@ public class WebSocketServer {
     public void onMessage(String message, Session session, @PathParam("username") String username) {
         log.info("服务端收到用户username={}的消息:{}", username, message);
         JSONObject obj = JSONUtil.parseObj(message);
-        String toUsername = obj.getStr("to"); // to表示发送给哪个用户，比如 admin
-        String text = obj.getStr("text"); // 发送的消息文本  hello
+        String toUsername = obj.getStr("toName"); // to表示发送给哪个用户，比如 admin
         // {"to": "admin", "text": "聊天文本"}
+        String content = obj.getStr("content");
+        String fromAvatar = obj.getStr("fromAvatar");
 
-        SensitiveWordUtil.replaceSensitiveWord(message, 1, "*");
+        SensitiveWordUtil.replaceSensitiveWord(content, 1, "*");
 
         Record record = new Record().builder().fromName(username).toName(toUsername)
-                .time(dateFormat.format(LocalDateTime.now())).content(message).build();
-        recordService.insert(record);
-        ResultMessage resultMessage = new ResultMessage(false,false,true,username,headcount,record);
+                .fromAvatar(fromAvatar).time(dateFormat.format(new Date())).content(content).build();
+        System.out.println(record);
+
+            recordService.insert(record);
+
+
+        ResultMessage resultMessage = new ResultMessage(false,false,true,username, users.size(), record);
 
         if(toUsername.equals("all")) {
             sendAllMessage(resultMessage.toString());
@@ -137,21 +159,25 @@ public class WebSocketServer {
     }
 
     private void listUsers(){
-        ResultMessage resultMessage = new ResultMessage(false,true,false,null,headcount,getNamesAndAvatars());
+        ResultMessage resultMessage = new ResultMessage(false,true,false,null,users.size(),getNamesAndAvatars());
         String message = JSON.toJSONString(resultMessage);
 
         sendAllMessage(message);
     }
 
-    public List<String> getNamesAndAvatars(){
+    public List<NameAndAvatar> getNamesAndAvatars(){
         Set<String> names = users.keySet();
 
 
-        List<String> nameAndAvatars = names.stream().collect(Collectors.toList());
-
+        List<NameAndAvatar> nameAndAvatars = names.stream().map(name->{
+//            User user = userService.getUserBynName(name);
+           // User user = restTemplate.getForObject(getUserByUserName + name, User.class);
+            NameAndAvatar nameAndAvatar = new NameAndAvatar(name,"https://thirdwx.qlogo.cn/mmopen/vi_32/P8h3wxWDqCqfI0BmHxAYHEzppsaBp4xt7nscyiaQ2ZptEhzyKcEia7loT6pO6zExaM9FR7BnSguxqKYuIe5B3aEA/132");
+            return nameAndAvatar;
+        }).collect(Collectors.toList());
         // getAvatars
         if(nameAndAvatars != null)
-            nameAndAvatars.add("all");
+            nameAndAvatars.add(new NameAndAvatar("all","https://thirdwx.qlogo.cn/mmopen/vi_32/P8h3wxWDqCqfI0BmHxAYHEzppsaBp4xt7nscyiaQ2ZptEhzyKcEia7loT6pO6zExaM9FR7BnSguxqKYuIe5B3aEA/132"));
 
         log.info("{}",nameAndAvatars);
         return nameAndAvatars;

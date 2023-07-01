@@ -17,8 +17,6 @@ public class RecordServiceImpl implements RecordService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private UserServiceClient userServiceClient;
     @Override
     public List<Record> getRecords(String fromUser, String toUser) {
 
@@ -43,6 +41,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public Boolean insert(Record record) {
         Record re = mongoTemplate.insert(record, "record");
+        System.out.println(re);
         if(re==null) return false;
         return true;
     }
