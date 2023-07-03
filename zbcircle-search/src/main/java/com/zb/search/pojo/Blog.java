@@ -1,6 +1,7 @@
-package com.zb.post.pojo;
+package com.zb.search.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -14,51 +15,59 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("zb_blog_comments")
-public class BlogComments implements Serializable {
+
+public class Blog implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
 
+    private Long id;
     /**
      * 用户id
      */
     private Long userId;
-
     /**
-     * 探店id
+     * 用户图标
      */
-    private Long blogId;
 
+    private String icon;
     /**
-     * 关联的1级评论id，如果是一级评论，则值为0
+     * 用户姓名
      */
-    private Long parentId;
 
+    private String name;
     /**
-     * 回复的评论id
+     * 是否点赞过了
      */
-    private Long answerId;
+    private Boolean isLike;
 
     /**
-     * 回复的内容
+     * 标题
+     */
+    private String title;
+
+    /**
+     * 照片，最多9张，多张以","隔开
+     */
+    private String images;
+
+    /**
+     * 文字描述
      */
     private String content;
 
     /**
-     * 点赞数
+     * 点赞数量
      */
     private Integer liked;
 
     /**
-     * 状态，0：正常，1：被举报，2：禁止查看
+     * 评论数量
      */
-    private Boolean status;
+    private Integer comments;
 
     /**
      * 创建时间

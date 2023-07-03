@@ -21,4 +21,3 @@ spring:
           - data-id: zbcircle-search-${spring.profiles.active}.yaml
             group: zbcircle-search
             refresh: true
-

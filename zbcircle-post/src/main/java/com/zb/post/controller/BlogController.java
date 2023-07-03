@@ -32,6 +32,13 @@ public class BlogController {
         return RestResponse.success("保存成功");
     }
 
+    @DeleteMapping("/delete/{id}")
+    public RestResponse deleteBlog(@PathVariable(value = "id") Long id) {
+        blogService.deleteBlog(id);
+        return RestResponse.success("删除成功");
+    }
+
+
     @PutMapping("/like/{id}")
     @ApiParam(value = "博客ID", example = "123")
     @ApiImplicitParams({

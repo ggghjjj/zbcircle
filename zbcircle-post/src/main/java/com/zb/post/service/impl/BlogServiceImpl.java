@@ -7,11 +7,13 @@ import com.zb.auth.common.constants.RedisConstants;
 import com.zb.auth.common.model.PageParams;
 import com.zb.auth.common.model.PageResult;
 import com.zb.auth.common.model.RestResponse;
+import com.zb.post.constants.MqConstants;
 import com.zb.post.dao.BlogMapper;
 import com.zb.post.pojo.Blog;
 import com.zb.post.pojo.User;
 import com.zb.post.service.BlogService;
 import com.zb.post.utils.SecurityUtil;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,16 @@ public class BlogServiceImpl implements BlogService {
     @Autowired
     private BlogMapper blogMapper;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public Boolean saveBlog(Blog blog) {
         int insert = blogMapper.insert(blog);
+        rabbitTemplate.convertAndSend(MqConstants.BLOG_EXCHANGE,MqConstants.BLOG_INSERT_KEY,blog.getId());
         return insert > 0 ? true : false;
     }
 
@@ -127,6 +133,13 @@ public class BlogServiceImpl implements BlogService {
         PageResult<Blog> result = new PageResult<>(records, total, params.getPageNo(), params.getPageSize());
 
         return result;
+    }
+
+    @Override
+    public void deleteBlog(Long id) {
+        rabbitTemplate.convertAndSend(MqConstants.BLOG_EXCHANGE,MqConstants.BLOG_DELETE_KEY,id);
+        blogMapper.deleteById(id);
+
     }
 
 
