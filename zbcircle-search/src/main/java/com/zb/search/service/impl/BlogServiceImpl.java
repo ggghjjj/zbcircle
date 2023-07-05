@@ -3,11 +3,13 @@ package com.zb.search.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.zb.auth.common.exception.ZbException;
 import com.zb.auth.common.model.PageResult;
+import com.zb.auth.common.model.RestResponse;
 import com.zb.search.feignclient.BlogServiceClient;
 import com.zb.search.pojo.Blog;
 import com.zb.search.pojo.BlogDoc;
 import com.zb.search.pojo.RequestBlogParams;
 import com.zb.search.service.BlogService;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -40,7 +42,9 @@ import java.util.List;
 
 /**
  * @author ghj
+ * @since 2023-07-03
  */
+@Slf4j
 @Service
 public class BlogServiceImpl implements BlogService {
 
@@ -57,10 +61,11 @@ public class BlogServiceImpl implements BlogService {
         buildBasicQuery(params,request);
         Integer page = params.getPage();
         Integer size = params.getSize();
-
+        log.info("搜索请求");
         request.source().from((page-1)*size).size(size);
         try {
             SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+            log.info("返回响应{}",response);
             return handleResponse(response,page,size);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -79,11 +84,14 @@ public class BlogServiceImpl implements BlogService {
         SearchHits searchHits = response.getHits();
         Long total = searchHits.getTotalHits().value;
         SearchHit[] hits = searchHits.getHits();
+        log.info("结果集{}",hits);
+
         Arrays.stream(hits).forEach(hit->{
             String json = hit.getSourceAsString();
-
+            log.info("结果集{}",json);
+            System.out.println(json);
             BlogDoc hotelDoc = JSON.parseObject(json, BlogDoc.class);
-            Object[] sortValues = hit.getSortValues();
+            log.info("解析对象{}",hotelDoc);
             list.add(hotelDoc);
         });
         return new PageResult(list,total,page,size);
@@ -98,10 +106,14 @@ public class BlogServiceImpl implements BlogService {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
         String key = params.getKey();
 
+        log.info("key等于" + key);
+
         if(key ==null || "".equals(key)) {
             boolQuery.must(QueryBuilders.matchAllQuery());
+            log.info("key 是 null走全文搜索");
         }else {
             boolQuery.must(QueryBuilders.matchQuery("all", key));
+            log.info("key不为null");
         }
 
         if(params.getCollege_id() != null && !params.getCollege_id().equals("")){
@@ -129,7 +141,7 @@ public class BlogServiceImpl implements BlogService {
             SearchResponse response = null;
 
             response = client.search(request, RequestOptions.DEFAULT);
-
+            log.info("suggest"+ response);
             // 4.解析结果
             Suggest suggest = response.getSuggest();
             // 4.1.根据补全查询名称，获取补全结果，注意返回值和ctrl+alt+v生成的内容不一样
@@ -142,6 +154,7 @@ public class BlogServiceImpl implements BlogService {
                 String text = option.getText().toString();
                 list.add(text);
             }
+            log.info("list" + list);
             return list;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -150,8 +163,10 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void insertById(Long id) {
-        Blog blog = blogServiceClient.getBlogById(id);
+        RestResponse<Blog> result = blogServiceClient.getBlogById(id);
+        Blog blog = result.getResult();
 
+        log.info("blog为{}",blog);
         BlogDoc blogDoc = new BlogDoc(blog);
         // 创建Request对象
         IndexRequest request = new IndexRequest("blog").id(blogDoc.getId().toString());
@@ -168,7 +183,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void deleteById(Long id) {
         try {
-          DeleteRequest request = new DeleteRequest("hotel", id.toString());
+          DeleteRequest request = new DeleteRequest("blog", id.toString());
 
             client.delete(request,RequestOptions.DEFAULT);
         } catch (IOException e) {

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("tb_follow")
+@TableName("zb_follow")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

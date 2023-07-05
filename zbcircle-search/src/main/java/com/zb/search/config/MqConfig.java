@@ -1,6 +1,6 @@
 package com.zb.search.config;
 
-import cn.itcast.hotel.constant.MqConstants;
+
 import com.zb.search.constants.MqConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -33,6 +33,6 @@ public class MqConfig {
     }
     @Bean
     public Binding blogDeleteQueuebinding() {
-        return BindingBuilder.bind(blogDeleteQueue()).to(blogTopicExchange()).with(MqConstants.BLOG_DELETE_QUEUE);
+        return BindingBuilder.bind(blogDeleteQueue()).to(blogTopicExchange()).with(MqConstants.BLOG_DELETE_KEY);
     }
 }

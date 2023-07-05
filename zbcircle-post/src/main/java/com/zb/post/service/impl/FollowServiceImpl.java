@@ -8,6 +8,7 @@ import com.zb.post.pojo.Follow;
 import com.zb.post.pojo.User;
 import com.zb.post.service.FollowService;
 import com.zb.post.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FollowServiceImpl implements FollowService {
 
     @Autowired
@@ -63,10 +65,10 @@ public class FollowServiceImpl implements FollowService {
         QueryWrapper<Follow> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",user.getId());
         queryWrapper.eq("follow_user_id",followUserId);
-
+        log.info("查询的参数是{},{}",user.getId(),followUserId);
         Integer count = followMapper.selectCount(queryWrapper);
-
-        return count > 0 ? false : true;
+        log.info("结果"+count);
+        return count > 0 ? true : false;
 
     }
 

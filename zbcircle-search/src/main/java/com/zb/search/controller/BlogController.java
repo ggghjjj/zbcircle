@@ -5,6 +5,7 @@ import com.zb.auth.common.model.RestResponse;
 import com.zb.search.pojo.BlogDoc;
 import com.zb.search.pojo.RequestBlogParams;
 import com.zb.search.service.BlogService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/search/blog")
+@Slf4j
 public class BlogController {
 
     @Autowired
@@ -20,6 +22,7 @@ public class BlogController {
     @PostMapping("/list")
     public RestResponse getList(@RequestBody RequestBlogParams requestParams) {
         PageResult pageResult = blogService.getList(requestParams);
+        log.info("搜索的参数为{}",requestParams);
         return RestResponse.success(pageResult);
     }
 

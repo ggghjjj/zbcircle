@@ -13,13 +13,16 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
-
+import lombok.extern.slf4j.Slf4j;
 import javax.annotation.Resource;
 import java.util.List;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 
 @RestController
 @RequestMapping("/post/blog")
+@Slf4j
 public class BlogController {
 
     @Resource
@@ -52,6 +55,7 @@ public class BlogController {
     @PostMapping("/of/me")
     public RestResponse queryMyBlog(@RequestBody PageParams params) {
         // 获取登录用户
+        log.info("获取用户");
 
         PageResult<Blog> blogs = blogService.queryMyBlog(params);
         return RestResponse.success(blogs);
@@ -64,8 +68,10 @@ public class BlogController {
     }
 
     @GetMapping("/{id}")
-    public RestResponse queryBlog(@PathVariable("id") Long id) {
+    public RestResponse<Blog> queryBlog(@PathVariable("id") Long id) {
+        log.info("查询id为{}",id);
         Blog blog =  blogService.queryBlog(id);
+
         return RestResponse.success(blog);
     }
 

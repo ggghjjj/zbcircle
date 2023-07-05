@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @FeignClient(name = "zbcircle-auth")
-@RequestMapping("/post/blog")
+@RequestMapping("/auth/perm")
 public interface PermsServiceClient {
 
     @GetMapping("/{id}")

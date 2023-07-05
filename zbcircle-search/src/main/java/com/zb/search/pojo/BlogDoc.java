@@ -31,7 +31,12 @@ public class BlogDoc {
     private LocalDateTime updateTime;
 
     private List<String> suggestion;
+
+    public BlogDoc() {
+    }
+
     public BlogDoc(Blog blog) {
+        System.out.println(blog);
         this.id = blog.getId();
         this.userId = blog.getUserId();
         this.title = blog.getTitle();
@@ -42,13 +47,6 @@ public class BlogDoc {
         this.createTime = blog.getCreateTime();
         this.updateTime = blog.getUpdateTime();
 
-//        if(this.business.contains("/")) {
-//            String[] split = this.business.split("/");
-//            this.suggestion = new ArrayList<>();
-//            this.suggestion.add(this.brand);
-//            Collections.addAll(this.suggestion,split);
-//        }else {
-//            this.suggestion = Arrays.asList(this.brand,this.business);
-//        }
+        this.suggestion = Arrays.asList(this.title);
     }
 }

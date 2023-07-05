@@ -13,6 +13,7 @@ import com.zb.post.pojo.Blog;
 import com.zb.post.pojo.User;
 import com.zb.post.service.BlogService;
 import com.zb.post.utils.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -24,6 +25,7 @@ import java.security.Security;
 import java.util.List;
 
 @Service
+@Slf4j
 public class BlogServiceImpl implements BlogService {
     @Autowired
     private BlogMapper blogMapper;
@@ -45,6 +47,7 @@ public class BlogServiceImpl implements BlogService {
     public void isBlogLiked(Blog blog) {
         User user = SecurityUtil.getUser();
         if(user==null) {
+            log.info("用户不存在");
             return ;
         }
         Long userId = user.getId();
@@ -76,6 +79,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public PageResult<Blog> queryMyBlog(PageParams params) {
         User user = SecurityUtil.getUser();
+        log.info("用户为{}",user);
         Long userId = user.getId();
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",userId);
@@ -97,6 +101,7 @@ public class BlogServiceImpl implements BlogService {
 
         User user = SecurityUtil.getUser();
         Long userId = user.getId();
+        log.info("用户id为{}",id);
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",id);
         Page<Blog> page = new Page<>(params.getPageNo(), params.getPageSize());
@@ -104,6 +109,7 @@ public class BlogServiceImpl implements BlogService {
         Page<Blog> pageResult = blogMapper.selectPage(page, queryWrapper);
         // 获取数据列表
         List<Blog> list = pageResult.getRecords();
+        log.info("用户的博客为集合{}",list);
         // 获取数据总数
         long total = pageResult.getTotal();
         // 构建结果集
