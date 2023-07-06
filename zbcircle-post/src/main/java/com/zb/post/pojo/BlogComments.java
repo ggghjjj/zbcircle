@@ -1,6 +1,7 @@
 package com.zb.post.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -31,9 +32,25 @@ public class BlogComments implements Serializable {
     private Long userId;
 
     /**
-     * 探店id
+     * 帖子id
      */
     private Long blogId;
+
+    /**
+     * 用户图标
+     */
+    @TableField(exist = false)
+    private String icon;
+    /**
+     * 用户姓名
+     */
+    @TableField(exist = false)
+    private String name;
+    /**
+     * 是否点赞过了
+     */
+    @TableField(exist = false)
+    private Boolean isLike;
 
     /**
      * 关联的1级评论id，如果是一级评论，则值为0

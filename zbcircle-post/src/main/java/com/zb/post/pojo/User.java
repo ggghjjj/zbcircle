@@ -31,7 +31,7 @@ public class User implements Serializable {
     private String nickname;
     @ApiModelProperty(value = "微信号")
     private String wxUnionid;
-    @ApiModelProperty(value = "课程id")
+    @ApiModelProperty(value = "班级id")
     private String classId;
     /**
      * 头像
@@ -41,7 +41,7 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "生日")
     private LocalDateTime birthday;
-    @ApiModelProperty(value = "性别别")
+    @ApiModelProperty(value = "性别")
     private String sex;
     @ApiModelProperty(value = "邮箱")
     private String email;

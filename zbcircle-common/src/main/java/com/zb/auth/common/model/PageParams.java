@@ -19,6 +19,6 @@ public class PageParams {
     private Long pageNo = DEFAULT_PAGE_CURRENT;
 
     // 当前每页记录数
-    @ApiModelProperty(value = "每页记录数", example = "2")
+    @ApiModelProperty(value = "每页记录数", example = "10")
     private Long pageSize = DEFAULT_PAGE_SIZE;
 }

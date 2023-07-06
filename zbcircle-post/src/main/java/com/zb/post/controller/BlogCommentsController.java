@@ -1,12 +1,84 @@
 package com.zb.post.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.zb.auth.common.model.PageParams;
+import com.zb.auth.common.model.PageResult;
+import com.zb.auth.common.model.RestResponse;
+import com.zb.post.pojo.BlogComments;
+import com.zb.post.service.BlogCommentsService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 
+/**
+ * @author ghj
+ * @since 2023-07-06
+ * 需求: 1. 保存评论
+ * 2.删除评论
+ * 3.分页获取评论
+ * 4.点赞评论
+ * 5.打开该评论的子级评论
+ */
 @RestController
-@RequestMapping("/blog-comments")
+@RequestMapping("/post/comments")
+@Slf4j
 public class BlogCommentsController {
+
+    @Resource
+    private BlogCommentsService blogCommentsService;
+
+    @PostMapping("/save")
+    public RestResponse save(@RequestBody BlogComments blogComments) {
+        blogCommentsService.save(blogComments);
+        return RestResponse.success("保存成功");
+    }
+
+    /**
+     * 先按照点赞排序，再时间倒叙查询
+     * @param params
+     * @return
+     */
+    @PostMapping("/list")
+    public RestResponse getList(@RequestBody PageParams params) {
+        PageResult<BlogComments> pageResult =  blogCommentsService.getList(params);
+        return RestResponse.success(pageResult);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public RestResponse delete(@PathVariable(value = "id") Long id) {
+        blogCommentsService.deleteBlog(id);
+        return RestResponse.success("删除成功");
+    }
+
+
+    /**
+     * 给帖子点赞和取消点赞
+     * @param id
+     * @return
+     */
+    @PutMapping("/like/{id}")
+    @ApiParam(value = "博客ID", example = "123")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "Authorization", required = true),
+    })
+    public RestResponse like(@PathVariable("id") Long id) {
+        blogCommentsService.like(id);
+        return RestResponse.success("成功");
+    }
+
+    @GetMapping("/{id}")
+    public RestResponse queryBlogComments(@RequestBody PageParams params,@PathVariable("id") Long id) {
+        log.info("查询id为{}",id);
+        PageResult<BlogComments> BlogComments =  blogCommentsService.queryBlogComments(params,id);
+
+        return RestResponse.success(BlogComments);
+    }
+
+
 
 }

@@ -104,6 +104,7 @@ public class BlogServiceImpl implements BlogService {
         log.info("用户id为{}",id);
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id",id);
+        queryWrapper.orderByDesc("create_time");
         Page<Blog> page = new Page<>(params.getPageNo(), params.getPageSize());
         // 查询数据内容获得结果
         Page<Blog> pageResult = blogMapper.selectPage(page, queryWrapper);
@@ -146,6 +147,22 @@ public class BlogServiceImpl implements BlogService {
         rabbitTemplate.convertAndSend(MqConstants.BLOG_EXCHANGE,MqConstants.BLOG_DELETE_KEY,id);
         blogMapper.deleteById(id);
 
+    }
+
+    @Override
+    public PageResult<Blog> getList(PageParams params) {
+        QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
+        Page<Blog> page = new Page<>(params.getPageNo(), params.getPageSize());
+        Page<Blog> blogPage = blogMapper.selectPage(page, queryWrapper);
+        List<Blog> records = blogPage.getRecords();
+        records.forEach(blog->{
+            this.updateBlog(blog);
+            this.isBlogLiked(blog);
+        });
+        long total = blogPage.getTotal();
+        PageResult<Blog> result = new PageResult<>(records, total, params.getPageNo(), params.getPageSize());
+        return result;
     }
 
 

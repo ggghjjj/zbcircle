@@ -6,12 +6,14 @@ import com.zb.post.dao.FollowMapper;
 import com.zb.post.feignclient.UserServiceClient;
 import com.zb.post.pojo.Follow;
 import com.zb.post.pojo.User;
+import com.zb.post.pojo.UserInfo;
 import com.zb.post.service.FollowService;
 import com.zb.post.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -34,12 +36,15 @@ public class FollowServiceImpl implements FollowService {
     private StringRedisTemplate stringRedisTemplate;
 
 
+
     //关注和取消关注
     @Override
+    @Transactional
     public String follow(Long followUserId, Boolean isFollow) {
         User user = SecurityUtil.getUser();
         Long id = user.getId();
-
+        UserInfo userInfo = userServiceClient.getUserInfo(id);
+        UserInfo followUserInfo = userServiceClient.getUserInfo(followUserId);
         if(isFollow) {
             QueryWrapper<Follow> queryWrapper = new QueryWrapper();
             queryWrapper.eq("user_id",user.getId());
@@ -49,11 +54,19 @@ public class FollowServiceImpl implements FollowService {
             if(count > 0) {
                 stringRedisTemplate.opsForSet().remove(RedisConstants.FOLLOW_KEY+id,followUserId.toString());
             }
+            followUserInfo.setFans(followUserInfo.getFans()-1);
+            userServiceClient.updateUserInfo(followUserInfo);
+            userInfo.setFollow(userInfo.getFollow()+1);
+            userServiceClient.updateUserInfo(userInfo);
         }else {
             Follow follow = new Follow().builder()
                     .userId(id).followUserId(followUserId).createTime(LocalDateTime.now()).build();
             followMapper.insert(follow);
             stringRedisTemplate.opsForSet().add(RedisConstants.FOLLOW_KEY+id,followUserId.toString());
+            followUserInfo.setFans(followUserInfo.getFans()+1);
+            userServiceClient.updateUserInfo(followUserInfo);
+            userInfo.setFollow(userInfo.getFollow()-1);
+            userServiceClient.updateUserInfo(userInfo);
         }
         return null;
     }

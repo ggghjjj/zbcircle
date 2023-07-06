@@ -20,6 +20,10 @@ import java.util.List;
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 
+/**
+ * @author ghj
+ * @since 2023-06-28
+ */
 @RestController
 @RequestMapping("/post/blog")
 @Slf4j
@@ -35,6 +39,17 @@ public class BlogController {
         return RestResponse.success("保存成功");
     }
 
+    /**
+     * 按照时间倒叙查询
+     * @param params
+     * @return
+     */
+    @PostMapping("/list")
+    public RestResponse getList(@RequestBody PageParams params) {
+       PageResult<Blog> pageResult =  blogService.getList(params);
+       return RestResponse.success(pageResult);
+    }
+
     @DeleteMapping("/delete/{id}")
     public RestResponse deleteBlog(@PathVariable(value = "id") Long id) {
         blogService.deleteBlog(id);
@@ -42,6 +57,11 @@ public class BlogController {
     }
 
 
+    /**
+     * 给帖子点赞和取消点赞
+     * @param id
+     * @return
+     */
     @PutMapping("/like/{id}")
     @ApiParam(value = "博客ID", example = "123")
     @ApiImplicitParams({
@@ -52,6 +72,11 @@ public class BlogController {
         return RestResponse.success("成功");
     }
 
+    /**
+     * 查询自己发布的帖子
+     * @param params
+     * @return
+     */
     @PostMapping("/of/me")
     public RestResponse queryMyBlog(@RequestBody PageParams params) {
         // 获取登录用户
@@ -61,6 +86,11 @@ public class BlogController {
         return RestResponse.success(blogs);
     }
 
+    /**
+     * 查询点赞最多的帖子
+     * @param params
+     * @return
+     */
     @PostMapping("/hot")
     public RestResponse queryHotBlog(@RequestBody PageParams params) {
         PageResult<Blog> blogs = blogService.queryHotBlog(params);

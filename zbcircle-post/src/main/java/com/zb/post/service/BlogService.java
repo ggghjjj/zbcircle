@@ -22,4 +22,6 @@ public interface BlogService {
     PageResult<Blog> queryHotBlog(PageParams params);
 
     void deleteBlog(Long id);
+
+    PageResult<Blog> getList(PageParams params);
 }
