@@ -1,6 +1,7 @@
 package com.zb.post.controller;
 
 
+import com.zb.auth.common.annotation.WebLog;
 import com.zb.auth.common.model.PageParams;
 import com.zb.auth.common.model.PageResult;
 import com.zb.auth.common.model.RestResponse;
@@ -33,6 +34,7 @@ public class BlogCommentsController {
     private BlogCommentsService blogCommentsService;
 
     @PostMapping("/save")
+    @WebLog(description = "发布评论")
     public RestResponse save(@RequestBody BlogComments blogComments) {
         blogCommentsService.save(blogComments);
         return RestResponse.success("保存成功");
@@ -44,12 +46,14 @@ public class BlogCommentsController {
      * @return
      */
     @PostMapping("/list")
+    @WebLog(description = "获取评论")
     public RestResponse getList(@RequestBody PageParams params) {
         PageResult<BlogComments> pageResult =  blogCommentsService.getList(params);
         return RestResponse.success(pageResult);
     }
 
     @DeleteMapping("/delete/{id}")
+    @WebLog(description = "删除该评论")
     public RestResponse delete(@PathVariable(value = "id") Long id) {
         blogCommentsService.deleteBlog(id);
         return RestResponse.success("删除成功");
@@ -66,12 +70,14 @@ public class BlogCommentsController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "Authorization", required = true),
     })
+    @WebLog(description = "给评论点赞")
     public RestResponse like(@PathVariable("id") Long id) {
         blogCommentsService.like(id);
         return RestResponse.success("成功");
     }
 
     @GetMapping("/{id}")
+    @WebLog(description = "分页查询二级评论")
     public RestResponse queryBlogComments(@RequestBody PageParams params,@PathVariable("id") Long id) {
         log.info("查询id为{}",id);
         PageResult<BlogComments> BlogComments =  blogCommentsService.queryBlogComments(params,id);

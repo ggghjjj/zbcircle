@@ -45,6 +45,8 @@ public class FollowServiceImpl implements FollowService {
         Long id = user.getId();
         UserInfo userInfo = userServiceClient.getUserInfo(id);
         UserInfo followUserInfo = userServiceClient.getUserInfo(followUserId);
+        log.info("个人的用户信息{}",userInfo);
+        log.info("被关注的用户信息{}",followUserInfo);
         if(isFollow) {
             QueryWrapper<Follow> queryWrapper = new QueryWrapper();
             queryWrapper.eq("user_id",user.getId());
@@ -54,6 +56,7 @@ public class FollowServiceImpl implements FollowService {
             if(count > 0) {
                 stringRedisTemplate.opsForSet().remove(RedisConstants.FOLLOW_KEY+id,followUserId.toString());
             }
+            log.info("粉丝的数量{}",followUserInfo.getFans());
             followUserInfo.setFans(followUserInfo.getFans()-1);
             userServiceClient.updateUserInfo(followUserInfo);
             userInfo.setFollow(userInfo.getFollow()+1);
@@ -63,6 +66,7 @@ public class FollowServiceImpl implements FollowService {
                     .userId(id).followUserId(followUserId).createTime(LocalDateTime.now()).build();
             followMapper.insert(follow);
             stringRedisTemplate.opsForSet().add(RedisConstants.FOLLOW_KEY+id,followUserId.toString());
+            log.info("粉丝的数量{}",followUserInfo.getFans());
             followUserInfo.setFans(followUserInfo.getFans()+1);
             userServiceClient.updateUserInfo(followUserInfo);
             userInfo.setFollow(userInfo.getFollow()-1);

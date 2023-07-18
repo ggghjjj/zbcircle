@@ -2,6 +2,7 @@ package com.zb.auth.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zb.auth.common.exception.ZbException;
 import com.zb.auth.common.utils.RegexpUtils;
 import com.zb.auth.dao.UserInfoMapper;
@@ -10,6 +11,7 @@ import com.zb.auth.dto.RegisterDTO;
 import com.zb.auth.pojo.User;
 import com.zb.auth.pojo.UserInfo;
 import com.zb.auth.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -98,9 +101,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean UpdateUserInfo(UserInfo userInfo) {
-        int count = userInfoMapper.updateById(userInfo);
-
-        return count > 0 ? true : false;
+        UpdateWrapper<UserInfo> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("user_id",userInfo.getUserId());
+        updateWrapper.set("city",userInfo.getCity());
+        updateWrapper.set("introduce",userInfo.getIntroduce());
+        updateWrapper.set("fans",userInfo.getFans());
+        updateWrapper.set("follow",userInfo.getFollow());
+        log.info("userinfo={}",userInfo);
+        userInfoMapper.update(userInfo,updateWrapper);
+        return true;
     }
 
     @Override
@@ -128,6 +137,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfo selectUserInfo(Long id) {
-        return userInfoMapper.selectById(id);
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id",id);
+        return userInfoMapper.selectOne(queryWrapper);
     }
 }

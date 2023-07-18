@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("zb_user_info")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
