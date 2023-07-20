@@ -18,6 +18,6 @@ spring:
         refresh-enabled: true
         file-extension: yaml
         shared-configs:
-          - data-id: zbcircle-post-${spring.profiles.active}.yaml
+          - data-id: zbcircle-mall-${spring.profiles.active}.yaml
             group: zbcircle-mall
             refresh: true

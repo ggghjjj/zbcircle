@@ -7,18 +7,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("zb_voucher")
-public class Voucher {
+public class Voucher implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     private String title;
     private String rules;
-    private int stock;
+    private Integer stock;
     private Long payValue;
     private Long actualValue;
     private Date createTime;

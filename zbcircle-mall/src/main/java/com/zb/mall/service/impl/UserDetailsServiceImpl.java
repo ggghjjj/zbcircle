@@ -1,9 +1,12 @@
 package com.zb.mall.service.impl;
 
 import com.zb.auth.common.exception.ZbException;
-import com.zb.post.feignclient.PermsServiceClient;
-import com.zb.post.feignclient.UserServiceClient;
-import com.zb.post.pojo.User;
+import com.zb.mall.feignclient.PermsServiceClient;
+import com.zb.mall.feignclient.UserServiceClient;
+import com.zb.mall.pojo.User;
+import com.zb.mall.feignclient.PermsServiceClient;
+import com.zb.mall.feignclient.UserServiceClient;
+import com.zb.mall.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,8 +1,9 @@
 package com.zb.mall.feignclient;
 
 
-import com.zb.post.pojo.User;
-import com.zb.post.pojo.UserInfo;
+
+import com.zb.mall.pojo.User;
+import com.zb.mall.pojo.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

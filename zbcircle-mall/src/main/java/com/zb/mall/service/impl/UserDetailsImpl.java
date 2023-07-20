@@ -1,7 +1,7 @@
 package com.zb.mall.service.impl;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.zb.post.pojo.User;
+import com.zb.mall.pojo.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

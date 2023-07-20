@@ -1,8 +1,9 @@
 package com.zb.mall.utils;
 
 
-import com.zb.post.pojo.User;
-import com.zb.post.service.impl.UserDetailsImpl;
+
+import com.zb.mall.pojo.User;
+import com.zb.mall.service.impl.UserDetailsImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
