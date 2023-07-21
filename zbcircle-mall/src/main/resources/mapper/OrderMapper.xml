@@ -81,20 +81,7 @@
     id, uid, order_sn, vid, uname, total_amount, pay_amount, coupon_amount, pay_type, 
     status, real_name, real_phone, real_address, confirm_status, pay_time, create_time
   </sql>
-  <select id="selectByExample" parameterType="com.zb.mall.pojo.OrderExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from zb_order
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -105,12 +92,7 @@
     delete from zb_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.zb.mall.pojo.OrderExample">
-    delete from zb_order
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
+
   <insert id="insert" parameterType="com.zb.mall.pojo.Order">
     insert into zb_order (id, uid, order_sn, 
       vid, uname, total_amount, 
@@ -228,12 +210,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.zb.mall.pojo.OrderExample" resultType="java.lang.Long">
-    select count(*) from zb_order
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     update zb_order
     <set>

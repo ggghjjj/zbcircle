@@ -72,20 +72,7 @@
   <sql id="Base_Column_List">
     id, name, shop_price, pimage, is_hot, cid, create_time, update_time
   </sql>
-  <select id="selectByExample" parameterType="com.zb.mall.pojo.ProductExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from zb_product
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -96,12 +83,7 @@
     delete from zb_product
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.zb.mall.pojo.ProductExample">
-    delete from zb_product
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
+
   <insert id="insert" parameterType="com.zb.mall.pojo.Product">
     insert into zb_product (id, name, shop_price, 
       pimage, is_hot, cid, 
@@ -165,12 +147,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.zb.mall.pojo.ProductExample" resultType="java.lang.Long">
-    select count(*) from zb_product
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     update zb_product
     <set>

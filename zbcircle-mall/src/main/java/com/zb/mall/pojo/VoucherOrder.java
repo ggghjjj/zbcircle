@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -20,8 +21,8 @@ public class VoucherOrder implements Serializable {
     private Long userId;
     private Long voucherId;
     private Byte status;
-    private Date createTime;
-    private Date useTime;
-    private Date updateTime;
+    private LocalDateTime createTime;
+    private LocalDateTime useTime;
+    private LocalDateTime updateTime;
 
 }

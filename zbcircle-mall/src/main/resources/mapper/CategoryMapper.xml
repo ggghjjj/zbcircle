@@ -66,20 +66,7 @@
   <sql id="Base_Column_List">
     id, cname
   </sql>
-  <select id="selectByExample" parameterType="com.zb.mall.pojo.CategoryExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from zb_category
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -90,12 +77,7 @@
     delete from zb_category
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.zb.mall.pojo.CategoryExample">
-    delete from zb_category
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
+
   <insert id="insert" parameterType="com.zb.mall.pojo.Category">
     insert into zb_category (id, cname)
     values (#{id,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR})
@@ -119,12 +101,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.zb.mall.pojo.CategoryExample" resultType="java.lang.Long">
-    select count(*) from zb_category
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     update zb_category
     <set>

@@ -7,5 +7,5 @@ public interface VoucherService {
 
     void deleteVoucher(Long id);
 
-    void addSeckillVoucher(Voucher voucher);
+    void addSeckillVoucher();
 }

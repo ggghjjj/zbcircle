@@ -13,6 +13,6 @@ public class RedisConstants {
 
     public static final String BLOG_COMMENTS_LIKED_KEY = "blogcomments:liked:";
 
-    public static final String SECKILL_STOCK_KEY = "mall:voucher:";
+    public static final String SECKILL_STOCK_KEY = "seckill:stock:";
 
 }

@@ -37,16 +37,6 @@ public class VoucherController {
         return RestResponse.success("删除成功");
 
     }
-    /**
-     * 新增秒杀券
-     *
-     * @param voucher 优惠券信息，包含秒杀信息
-     * @return 优惠券id
-     */
-    @PostMapping("/add/seckill")
-    public RestResponse addSeckillVoucher(@RequestBody Voucher voucher) {
-        voucherService.addSeckillVoucher(voucher);
-        return RestResponse.success("添加成功");
-    }
+
 
 }

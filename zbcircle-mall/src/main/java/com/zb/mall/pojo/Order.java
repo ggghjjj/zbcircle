@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -32,7 +33,7 @@ public class Order implements Serializable {
     private String realPhone;
     private String realAddress;
     private Byte confirmStatus;
-    private Date payTime;
-    private Date createTime;
+    private LocalDateTime payTime;
+    private LocalDateTime createTime;
 
 }

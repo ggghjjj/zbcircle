@@ -1,4 +1,4 @@
-package com.zb.auth.common.utils;
+package com.zb.mall.utils;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class RedisIdWorker {
     }
 
 
-    public long nextId(String keyPrefix) {
+    public Long nextId(String keyPrefix) {
         // 生成时间戳
         LocalDateTime now= LocalDateTime.now();
         long nowSecond = now.toEpochSecond(ZoneOffset.UTC);

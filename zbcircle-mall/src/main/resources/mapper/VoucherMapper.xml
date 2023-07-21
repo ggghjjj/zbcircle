@@ -75,20 +75,7 @@
     id, title, rules, stock, pay_value, actual_value, create_time, begin_time, end_time, 
     update_time
   </sql>
-  <select id="selectByExample" parameterType="com.zb.mall.pojo.VoucherExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from zb_voucher
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -98,12 +85,6 @@
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from zb_voucher
     where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.zb.mall.pojo.VoucherExample">
-    delete from zb_voucher
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
   </delete>
   <insert id="insert" parameterType="com.zb.mall.pojo.Voucher">
     insert into zb_voucher (id, title, rules, 
@@ -182,12 +163,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.zb.mall.pojo.VoucherExample" resultType="java.lang.Long">
-    select count(*) from zb_voucher
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     update zb_voucher
     <set>
