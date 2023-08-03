@@ -88,4 +88,7 @@ public class UserController {
     public UserInfo SelectUserInfo(@PathVariable("id") Long id) {
         return userService.selectUserInfo(id);
     }
+
+
+
 }
